@@ -1,0 +1,7 @@
+conductor:
+ - { t: tempo, bpm: 1350 }
+
+miku:
+ - { t: note, key: C4, length: 16, lyric: じゅ }
+ - { t: note, key: G3, length: 16, lyric: う }
+ - { t: note, key: E4, length: 16, lyric: じ }

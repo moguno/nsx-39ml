@@ -32,7 +32,7 @@ def parse_key(str)
     case $~[:sharp]
     when "-"
       key -= 1
-    when "+", "#"
+    when "+"
       key += 1
     end
   else

@@ -48,7 +48,7 @@ def parse_key(str)
   key = 0
 
   if str == "R"
-    -1
+    key = -1
   elsif str =~ /^(?<key>[A-GR])(?<sharp>[-\#+])?(?<octave>[0-9])$/
     key = ($~[:octave].to_i + 2) * 12 + key_map[$~[:key]]
 
@@ -244,7 +244,7 @@ end
 def parse_note(channel, note)
   events = []
  
-  if note["lyric"]
+  if note["key"] != "R" && note["lyric"]
     events << SystemExclusive.new(get_lyric_exclusive(parse_lyric(note["lyric"])))
   end
 
@@ -254,11 +254,13 @@ def parse_note(channel, note)
 
   key = parse_key(note["key"])
 
-  if key != -1
-    events << NoteOn.new(channel, parse_key(note["key"]), 127, 0)
+  if key == -1
+    events << NoteOn.new(channel, 1, 1, 0)
+    events << NoteOn.new(channel, 1, 1, parse_length(note["length"]))
+  else
+    events << NoteOn.new(channel, key, 127, 0)
+    events << NoteOn.new(channel, key, 0, parse_length(note["length"]))
   end
-
-  events << NoteOn.new(channel, parse_key(note["key"]), 0, parse_length(note["length"]))
 
   if note["vibrate"]
     events << Controller.new(channel, 1, 0)

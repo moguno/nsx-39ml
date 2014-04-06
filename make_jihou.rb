@@ -1,71 +1,8 @@
 # coding: utf-8
 
-require File.join(File.dirname(__FILE__), "nsx-39ml.rb")
+require File.join(File.dirname(__FILE__), "nsx39helper.rb")
 
-class NSX39Helper
-  def initialize
-    @conductors = []
-    @channels = {}
-
-    @conductors.instance_eval {
-      def method_missing(name, *args)
-        result = { "t" => name.to_s }.merge(args[0])
-        self << result
-        result
-      end
-    }
-  end
-
-  def conductor(&block)
-    @conductors.instance_eval(&block)
-  end
-
-  def channel(ch, &block)
-    @channels[ch] ||= []
-
-    @channels[ch].instance_eval {
-      def method_missing(name, *args)
-        result = { "t" => name.to_s }.merge(args[0])
-        self << result
-        result
-      end
-    }
-
-    @channels[ch].instance_eval(&block)
-  end
-
-  def to_hash
-    result = { "conductor" => @conductors }
-    
-    @channels.each { |k, v|
-      result[("channel" + k.to_s).to_s] = v
-    }
-
-    result
-  end
-end
-
-
-nsx39 = NSX39Helper.new
-
-nsx39.conductor {
-  tempo("bpm" => 90)
-}
-
-
-def make_notes(lyrics)
-  lyrics.map { |lyric|
-    key = ["C", "E", "G"].sample + ["4"]. sample
-
-    if lyric == "っ"
-      {"key" => "R", "lyric" => lyric, "length" => 4}
-    else
-      {"key" => key, "lyric" => lyric, "length" => 4}
-    end
-  }
-end
-
-
+# 時
 HOURS = [
   [ "じゅ", "う", "に" ],
   [ "い", "ち" ],
@@ -81,6 +18,8 @@ HOURS = [
   [ "じゅ", "う", "い", "ち" ]
 ]
 
+
+# 分（10の位。10で割り切れる）
 MINUTES_10_JUST = [
   [],
   [ "じゅ", "っ" ],
@@ -90,6 +29,8 @@ MINUTES_10_JUST = [
   [ "ご", "じゅ", "っ" ],
 ]
 
+
+# 分（10の位。10で割り切れない）
 MINUTES_10_FRAC = [
   [],
   [ "じゅ", "う" ],
@@ -99,6 +40,8 @@ MINUTES_10_FRAC = [
   [ "ご", "じゅ", "う" ],
 ]
 
+
+# 分（1の位）
 MINUTES_1 = [
   [],
   [ "い", "っ" ],
@@ -113,27 +56,51 @@ MINUTES_1 = [
 ]
 
 
-now = Time.now
+class NSX39Helper
+  # 言葉に適当に音程を付ける
+  def self.make_notes(lyrics)
+    lyrics.map { |lyric|
+      key = [ "C3", "E3", "G3", "C4" ].sample
 
-lyrics = []
+      if lyric == "っ"
+        {"key" => "R", "lyric" => lyric, "length" => 4}
+      else
+        {"key" => key, "lyric" => lyric, "length" => 4}
+      end
+    }
+  end
 
-lyrics += HOURS[now.hour % 12] + [ "じ" ]
+  # ミクに時刻を教えてもらう
+  def tell_clock!(now = Time.now)
+    lyrics = []
 
-if now.min == 0
-  # nop
-elsif (now.min % 10) == 0
-  lyrics += MINUTES_10_JUST[now.min / 10] + [ "ぷ", "ん" ]
-else
-  lyrics += MINUTES_10_FRAC[now.min / 10] + MINUTES_1[now.min % 10] + [ "ふ", "ん" ]
+    lyrics += HOURS[now.hour % 12] + [ "じ", "っ" ]
+
+    if now.min == 0
+      # nop
+    elsif (now.min % 10) == 0
+      lyrics += MINUTES_10_JUST[now.min / 10] + [ "ぷ", "ん", "っ" ]
+    else
+      lyrics += MINUTES_10_FRAC[now.min / 10] + MINUTES_1[now.min % 10] + [ "ふ", "ん", "っ" ]
+    end
+
+    lyrics += [ "で", "す" ]
+
+    channel(1) {
+      NSX39Helper.make_notes(lyrics).each { |_note| note(_note) }
+    }
+  end
 end
 
-lyrics += [ "で", "す" ]
 
-nsx39.channel(1) {
-  make_notes(lyrics).each { |_note| note(_note) }
-}
+if __FILE__ == $0
+  nsx39 = NSX39Helper.new
 
-File.open(ARGV[0], "wb") { |file|
-  a = create_sequence(nsx39.to_hash)
-  a.write(file)
-}
+  nsx39.conductor {
+    tempo("bpm" => 150)
+  }
+
+  nsx39.tell_clock!
+
+  nsx39.save_to_file("miku_clock.mid")
+end

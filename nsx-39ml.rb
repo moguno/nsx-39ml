@@ -1,4 +1,5 @@
 #! /usr/bin/ruby2.1
+# coding: utf-8
 
 require "midilib/sequence"
 require "midilib/consts"

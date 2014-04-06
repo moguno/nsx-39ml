@@ -6,7 +6,7 @@ require "yaml"
 
 include MIDI
 
-# バグ修正
+# midilibのバグ修正
 class SystemExclusive
   def data_as_bytes
     data = []
@@ -16,6 +16,27 @@ class SystemExclusive
     data << EOX
     data.flatten
   end
+end
+
+
+def parse_conductor(ml)
+  events = []
+
+  # XGシステムONだと・・・？俺のNSX-39の真の力が解放されると言うのか！
+  events << SystemExclusive.new([0x43, 0x10, 0x4c, 0x00, 0x00, 0x7e, 0x00])
+
+  ml.each { |event|
+    event = case event["t"]
+    when "tempo"
+      Tempo.new(Tempo.bpm_to_mpq(event["bpm"]))
+    end
+
+    if event
+      events << event
+    end
+  }
+
+  events
 end
 
 
@@ -238,29 +259,72 @@ puts note
 end
 
 
-ml = YAML.load(File.open(ARGV[0], "rt"))
+def create_sequence(ml)
+  seq = Sequence.new()
+
+  # 設定トラック
+  if ml["conductor"]
+    conductor_track = Track.new(seq)
+    seq.tracks << conductor_track
+
+    events = parse_conductor(ml["conductor"])
+
+    conductor_track.events.concat(events)
+  end
+
+  # ミクたそトラック
+  if ml["miku"]
+    miku_track = Track.new(seq)
+    seq.tracks << miku_track
+
+    ml["miku"].each { |event|
+      events = case event["t"]
+      when "note"
+        parse_note(0, event)
+      when "tone"
+        [ProgramChange.new(0, event["no"].to_i)]
+      end
+
+      if events
+        miku_track.events.concat(events)
+      end
+    }
+  end
+
+  # バックバンド
+  ml.select { |k, v| k =~ /^channel1?[0-9]$/ }.each { |k, v|
+    band_track = Track.new(seq)
+    seq.tracks << band_track
+
+    k =~ /^channel(?<channel>.+)$/
+
+    channel = $~[:channel].to_i - 1
+
+    band_track.events << ProgramChange.new(channel, 20, 12)
+
+    v.each { |event|
+      events = case event["t"]
+      when "note"
+        parse_note(channel, event)
+      when "tone"
+        [ProgramChange.new(channel, event["tone_no"].to_i)]
+      end
+
+      if events
+        band_track.events.concat(events)
+      end
+    }
+  }
+
+  seq
+end
 
 
+if __FILE__ == $0
+  ml = YAML.load(File.open(ARGV[0], "rt"))
+  seq = create_sequence(ml)
 
-
-
-
-
-
-seq = Sequence.new()
-
-track = Track.new(seq)
-seq.tracks << track
-track.events << Tempo.new(Tempo.bpm_to_mpq(120))
-
-track1 = Track.new(seq)
-seq.tracks << track1
-
-ml["miku"].each { |event|
-  track1.events.concat(parse_note(0, event))
+  File.open(ARGV[1], "wb") { |file|
+    seq.write(file)
+  }
 }
-
-puts "----"
-puts track1.events
-
-File.open("test.mid", "wb") { |file| seq.write(file) }

@@ -16,3 +16,22 @@ miku:
  - { t: note, key: D4, length: 3, lyric: し }
  - { t: note, key: C4, length: 4, lyric: た }
  - { t: note, key: G3, length: 2, lyric: か }
+
+channel2:
+ - { t: tone, tone_no: 50 }
+ - { t: note, key: C4, length: 4 }
+ - { t: note, key: D4, length: 4 }
+ - { t: note, key: E4, length: 4 }
+ - { t: note, key: F4, length: 4 }
+ - { t: note, key: E4, length: 4 }
+ - { t: note, key: C4, length: 4 }
+ - { t: note, key: A3, length: 4 }
+ - { t: note, key: C4, length: 2 }
+ - { t: note, key: D4, length: 2 }
+ - { t: note, key: D4, length: 4 }
+ - { t: note, key: E4, length: 8 }
+ - { t: note, key: D4, length: 3 }
+ - { t: note, key: C4, length: 4 }
+ - { t: note, key: G3, length: 2 }
+
+

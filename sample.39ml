@@ -1,0 +1,35 @@
+conductor:
+ - { t: tempo, bpm: 120 }
+
+miku:
+ - { t: note, key: C4, length: 4, lyric: か }
+ - { t: note, key: D4, length: 4, lyric: え }
+ - { t: note, key: E4, length: 4, lyric: る }
+ - { t: note, key: F4, length: 4, lyric: の }
+ - { t: note, key: E4, length: 4, lyric: う }
+ - { t: note, key: D4, length: 4, lyric: た }
+ - { t: note, key: C4, length: 2, lyric: が, vibrate: 32 }
+ - { t: note, key: E4, length: 4, lyric: き }
+ - { t: note, key: F4, length: 4, lyric: こ }
+ - { t: note, key: G4, length: 4, lyric: え }
+ - { t: note, key: A4, length: 4, lyric: て }
+ - { t: note, key: G4, length: 4, lyric: く }
+ - { t: note, key: F4, length: 4, lyric: る }
+ - { t: note, key: E4, length: 2, lyric: よ, vibrate: 32 }
+ 
+channel2:
+ - { t: tone, tone_no: 50 }
+ - { t: note, key: C4, length: 4 }
+ - { t: note, key: D4, length: 4 }
+ - { t: note, key: E4, length: 4 }
+ - { t: note, key: F4, length: 4 }
+ - { t: note, key: E4, length: 4 }
+ - { t: note, key: D4, length: 4 }
+ - { t: note, key: C4, length: 2 }
+ - { t: note, key: E4, length: 4 }
+ - { t: note, key: F4, length: 4 }
+ - { t: note, key: G4, length: 4 }
+ - { t: note, key: A4, length: 4 }
+ - { t: note, key: G4, length: 4 }
+ - { t: note, key: F4, length: 4 }
+ - { t: note, key: E4, length: 2 }

@@ -241,7 +241,6 @@ end
 
 
 def parse_note(channel, note)
-puts note
   events = []
  
   if note["lyric"]

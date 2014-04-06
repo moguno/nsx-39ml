@@ -1,4 +1,4 @@
-#! /usr/bin/ruby2.1
+#! /usr/bin/env ruby
 # coding: utf-8
 
 require "midilib/sequence"

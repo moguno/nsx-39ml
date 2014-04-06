@@ -255,8 +255,7 @@ def parse_note(channel, note)
   key = parse_key(note["key"])
 
   if key == -1
-    events << NoteOn.new(channel, 1, 1, 0)
-    events << NoteOn.new(channel, 1, 1, parse_length(note["length"]))
+    events << NoteOn.new(channel, 1, 0, parse_length(note["length"]))
   else
     events << NoteOn.new(channel, key, 127, 0)
     events << NoteOn.new(channel, key, 0, parse_length(note["length"]))

@@ -327,4 +327,4 @@ if __FILE__ == $0
   File.open(ARGV[1], "wb") { |file|
     seq.write(file)
   }
-}
+end

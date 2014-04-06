@@ -15,7 +15,7 @@ miku:
  - { t: note, key: E4, length: 8, lyric: で }
  - { t: note, key: D4, length: 3, lyric: し }
  - { t: note, key: C4, length: 4, lyric: た }
- - { t: note, key: G3, length: 2, lyric: か }
+ - { t: note, key: G3, length: 2, lyric: か, vibrate: 32 }
 
 channel2:
  - { t: tone, tone_no: 50 }

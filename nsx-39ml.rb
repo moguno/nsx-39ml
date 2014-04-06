@@ -247,6 +247,10 @@ def parse_note(channel, note)
     events << SystemExclusive.new(get_lyric_exclusive(parse_lyric(note["lyric"])))
   end
 
+  if note["vibrate"]
+    events << Controller.new(channel, 1, note["vibrate"].to_i)
+  end
+
   key = parse_key(note["key"])
 
   if key != -1
@@ -254,6 +258,10 @@ def parse_note(channel, note)
   end
 
   events << NoteOn.new(channel, parse_key(note["key"]), 0, parse_length(note["length"]))
+
+  if note["vibrate"]
+    events << Controller.new(channel, 1, 0)
+  end
 
   events
 end

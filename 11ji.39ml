@@ -4,4 +4,6 @@ conductor:
 miku:
  - { t: note, key: C4, length: 8, lyric: じゅ }
  - { t: note, key: G3, length: 8, lyric: う }
+ - { t: note, key: G3, length: 8, lyric: い }
+ - { t: note, key: E3, length: 8, lyric: ち }
  - { t: note, key: E4, length: 4, lyric: じ }

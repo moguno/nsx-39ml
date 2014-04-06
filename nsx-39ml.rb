@@ -8,6 +8,7 @@ require "yaml"
 
 include MIDI
 
+
 # midilibのバグ修正
 class SystemExclusive
   def data_as_bytes
@@ -21,6 +22,7 @@ class SystemExclusive
 end
 
 
+# conductorトラックのパース
 def parse_conductor(ml)
   events = []
 
@@ -42,6 +44,7 @@ def parse_conductor(ml)
 end
 
 
+# キーのパース
 def parse_key(str)
   key_map = { "C" => 0, "D" => 2, "E" => 4, "F" => 5, "G" => 7, "A" => 9, "B" => 11 }
 
@@ -66,16 +69,19 @@ def parse_key(str)
 end
 
 
+# 長さ情報のパース
 def parse_length(str)
   1920 / str.to_i
 end
 
 
+# 歌詞エクスクルーシブを生成する
 def get_lyric_exclusive(code)
   [0x43, 0x79, 0x09, 0x11, 0x0a, 0x00, code]
 end
 
 
+# 歌詞をパース
 def parse_lyric(str)
   lyric_table = {
     "あ" => 0x00,
@@ -241,6 +247,7 @@ def parse_lyric(str)
 end
 
 
+# ノート情報のパース
 def parse_note(channel, note)
   events = []
  
@@ -269,6 +276,7 @@ def parse_note(channel, note)
 end
 
 
+# NSX-39MLのハッシュからMIDIシーケンスデータを構築する
 def create_sequence(ml)
   seq = Sequence.new()
 

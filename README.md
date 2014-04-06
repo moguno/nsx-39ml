@@ -1,17 +1,17 @@
 nsx-39ml
 ========
 
-nsx-39（ポケットミク）とお気軽に遊ぼう！
+NSX-39（ポケットミク）とお気軽に遊ぼう！
 
 
 ## インストール
 
 用意するもの：Ruby(1.9.3以降)
 
-(1)gemからbundlerをインストールして下さい。
-(2)nsx-39mlを展開して下さい。
-(3)nsx-39mlディレクトリに移動して下さい。
-(4)bundle installしてmidilibをインストールして下さい。
+1. gemからbundlerをインストールして下さい。
+2. nsx-39mlを展開して下さい。
+3. nsx-39mlディレクトリに移動して下さい。
+4. bundle installしてmidilibをインストールして下さい。
 
 
 ## マークアップ言語 -> MIDIファイルコンパイラ（nsx-39ml.rb）
@@ -24,7 +24,7 @@ MIDIに詳しくない or いちいち歌詞エクスクルーシブを定義し
 
 付属のsample.39mlからsample.midを作る時は下記の様にします。
 
-./nsx-39ml.rb sample.39ml sample.mid
+`./nsx-39ml.rb sample.39ml sample.mid`
 
 NSX-39MLの文法はsample.39mlから編み出して下さい。
 
@@ -49,7 +49,9 @@ nsx39helper.rbをrequireして下さい。
 
 ### 使い方
 
-./nsx-39_clock.rb
+ポケットミクを接続して、オプション無しで実行して下さい。
+
+`./nsx-39_clock.rb`
 
 
 ## ライセンス

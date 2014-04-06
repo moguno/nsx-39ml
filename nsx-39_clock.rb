@@ -111,7 +111,7 @@ if __FILE__ == $0
 
   if !port
     STDERR.puts "NSX-39がいないよ"
-    return 1
+    exit 1
   end
 
 

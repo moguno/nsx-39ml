@@ -247,6 +247,37 @@ def parse_lyric(str)
 end
 
 
+# システムエクスクルーシブ
+def parse_exclusive(channel, exclusive)
+  events = []
+
+  events << SystemExclusive.new(exclusive["data"])
+
+  events
+end
+
+
+# コントロールチェンジ
+def parse_control(channel, control)
+  events = []
+
+puts control
+  events << Controller.new(channel, control["type"], control["value"])
+
+  events
+end
+
+
+# プログラムチェンジ
+def parse_program(channel, program)
+  events = []
+
+  events << ProgramChange.new(channel, program["tone_no"])
+end
+
+alias parse_tone parse_program
+
+
 # ノート情報のパース
 def parse_note(channel, note)
   events = []
@@ -296,12 +327,7 @@ def create_sequence(ml)
     seq.tracks << miku_track
 
     ml["miku"].each { |event|
-      events = case event["t"]
-      when "note"
-        parse_note(0, event)
-      when "tone"
-        [ProgramChange.new(0, event["no"].to_i)]
-      end
+      events = self.send(("parse_" + event["t"].to_s ).to_sym, 0, event)
 
       if events
         miku_track.events.concat(events)
@@ -321,12 +347,7 @@ def create_sequence(ml)
     band_track.events << ProgramChange.new(channel, 20, 12)
 
     v.each { |event|
-      events = case event["t"]
-      when "note"
-        parse_note(channel, event)
-      when "tone"
-        [ProgramChange.new(channel, event["tone_no"].to_i)]
-      end
+      events = self.send(("parse_" + event["t"].to_s ).to_sym, channel, event)
 
       if events
         band_track.events.concat(events)

@@ -261,7 +261,6 @@ end
 def parse_control(channel, control)
   events = []
 
-puts control
   events << Controller.new(channel, control["type"], control["value"])
 
   events
@@ -359,7 +358,49 @@ def create_sequence(ml)
 end
 
 
+macros = {}
+
+def load_macros(ml)
+  if ml["macro"]
+    ml["macro"].each { |macro|
+      define_singleton_method("parse_" + macro["t"]) { |channel, event|
+        events = []
+
+        macro["macro"].each { |m|
+          e = {}
+
+          m.each { |k, v|
+            # 変数
+            if v =~ /^\$(?<var>.+)(:(?<cls>.+))?$/
+              if $~[:cls]
+              else
+                if event[$~[:var]]
+                  e[k] = event[$~[:var]]
+                else
+                  raise "みゃー"
+                end 
+              end
+            else
+              e[k] = v
+            end
+          }
+puts e
+          events += self.send(("parse_" + e["t"].to_s ).to_sym, channel, e)
+puts events
+        }
+
+        events
+      }
+    }
+  end
+end
+
+
 if __FILE__ == $0
+  macro_ml = YAML.load(File.open("reverve.39h", "rt"))
+
+  load_macros(macro_ml)
+
   ml = YAML.load(File.open(ARGV[0], "rt"))
   seq = create_sequence(ml)
 

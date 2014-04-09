@@ -2,13 +2,15 @@ conductor:
  - { t: tempo, bpm: 120 }
 
 miku:
- - { t: reverve, type: room1, send: 127 }
+ - { t: reverve, type: white_room, send: 127 }
  - { t: note, key: G4, length: 4, lyric: ちょ }
  - { t: note, key: E4, length: 4, lyric: お }
  - { t: note, key: E4, length: 2, lyric: ちょ, vibrate: 32 }
+ - { t: chorus, type: symphonic1, send: 127 }
  - { t: note, key: F4, length: 4, lyric: ちょ }
  - { t: note, key: D4, length: 4, lyric: お }
  - { t: note, key: D4, length: 2, lyric: ちょ, vibrate: 32 }
+ - { t: reverve, type: tunnel, send: 127 }
  - { t: note, key: C4, length: 4, lyric: な }
  - { t: note, key: D4, length: 4, lyric: の }
  - { t: note, key: E4, length: 4, lyric: は }

@@ -291,10 +291,16 @@ def parse_note(channel, note)
 
   key = parse_key(note["key"])
 
+  vel = if note["vel"]
+    note["vel"]
+  else
+    127
+  end
+
   if key == -1
     events << NoteOn.new(channel, 1, 0, parse_length(note["length"]))
   else
-    events << NoteOn.new(channel, key, 127, 0)
+    events << NoteOn.new(channel, key, vel, 0)
     events << NoteOn.new(channel, key, 0, parse_length(note["length"]))
   end
 
@@ -444,7 +450,8 @@ end
 
 
 if __FILE__ == $0
-  macro_ml = YAML.load(File.open("reverve.39h", "rt"))
+  # 標準ライブラリを読み込む
+  macro_ml = YAML.load(File.open(File.join(File.dirname(__FILE__), "stdlib.39h"), "rt"))
 
   load_macros(macro_ml)
 

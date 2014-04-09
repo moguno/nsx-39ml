@@ -358,9 +358,16 @@ def create_sequence(ml)
 end
 
 
-macros = {}
-
 def load_macros(ml)
+  tables = {}
+
+  if ml["table"]
+    ml["table"].each { |table|
+      tables[table["t"]] = table["table"]
+    }
+  end
+
+
   if ml["macro"]
     ml["macro"].each { |macro|
       define_singleton_method("parse_" + macro["t"]) { |channel, event|
@@ -370,19 +377,33 @@ def load_macros(ml)
           e = {}
 
           m.each { |k, v|
+            vv = Array(v).map { |v2|
+
             # 変数
-            if v =~ /^\$(?<var>.+)(:(?<cls>.+))?$/
+            if v2 =~ /^\$(?<var>.+?)(\/(?<cls>.+?)(\@(?<index>[0-9]+))?)?$/
+puts "xxx"
+p $~
+puts "xxx"
+puts $~[:cls]
               if $~[:cls]
+p tables
+                tables[$~[:cls]][event[$~[:var]]][$~[:index].to_i]
               else
                 if event[$~[:var]]
-                  e[k] = event[$~[:var]]
+                  event[$~[:var]]
                 else
                   raise "みゃー"
                 end 
               end
             else
-              e[k] = v
+              v2
             end
+          }
+            if v.is_a?(Array)
+              e[k] = vv
+            else
+              e[k] = vv[0]
+		end
           }
 puts e
           events += self.send(("parse_" + e["t"].to_s ).to_sym, channel, e)

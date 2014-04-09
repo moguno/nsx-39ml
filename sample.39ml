@@ -2,6 +2,7 @@ conductor:
  - { t: tempo, bpm: 120 }
 
 miku:
+ - { t: reverve, type: room1, send: 127 }
  - { t: note, key: G4, length: 4, lyric: ちょ }
  - { t: note, key: E4, length: 4, lyric: お }
  - { t: note, key: E4, length: 2, lyric: ちょ, vibrate: 32 }

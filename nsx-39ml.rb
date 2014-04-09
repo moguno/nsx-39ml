@@ -358,62 +358,88 @@ def create_sequence(ml)
 end
 
 
+# マクロの変数を処理する
+def parse_sub_event_param(value, event, tables)
+  x_value = value
+
+  # 変数
+  if value =~ /^\$(?<var>.+?)(\/(?<cls>.+?)(\@(?<index>[0-9]+))?)?$/
+    # メインイベントに該当するパラメータが有るか
+    if !event[$~[:var]]
+      raise "マクロに必要なパラメータが指定されていません"
+    end
+
+    # テーブル引きあり
+    if $~[:cls]
+      if !tables[$~[:cls]]
+        raise "テーブル#{$~[:cls]}が見つかりません"
+      end
+
+      if !tables[$~[:cls]][event[$~[:var]]]
+        raise "テーブル#{$~[:cls]}に#{event[$~[:var]]}は存在しません"
+      end
+
+      index = if $~[:index]
+        $~[:index]
+      else
+        0
+      end
+
+      x_value = Array(tables[$~[:cls]][event[$~[:var]]])[index.to_i]
+
+      if !x_value
+        raise "テーブル#{$~[:cls]}に#{event[$~[:var]]}の#{index}番目の要素は存在しません"
+      end
+
+    # 普通の変数
+    else
+      x_value = event[$~[:var]]
+    end
+  end
+
+  x_value
+end
+
+
+# マクロファイルをパースする
 def load_macros(ml)
   tables = {}
 
-  if ml["table"]
-    ml["table"].each { |table|
-      tables[table["t"]] = table["table"]
-    }
-  end
+  # テーブルの読み込み
+  Array(ml["table"]).each { |table|
+    tables[table["t"]] = table["table"]
+  }
 
 
-  if ml["macro"]
-    ml["macro"].each { |macro|
-      define_singleton_method("parse_" + macro["t"]) { |channel, event|
-        events = []
+  # 私のマクロを聴けー！
+  Array(ml["macro"]).each { |macro|
 
-        macro["macro"].each { |m|
-          e = {}
+    # パースメソッドを動的に生成する
+    define_singleton_method("parse_" + macro["t"]) { |channel, event|
+      events = []
 
-          m.each { |k, v|
-            vv = Array(v).map { |v2|
+      # マクロ内のイベントを処理
+      macro["macro"].each { |sub_events|
+        sub_event = {}
 
-            # 変数
-            if v2 =~ /^\$(?<var>.+?)(\/(?<cls>.+?)(\@(?<index>[0-9]+))?)?$/
-puts "xxx"
-p $~
-puts "xxx"
-puts $~[:cls]
-              if $~[:cls]
-p tables
-                tables[$~[:cls]][event[$~[:var]]][$~[:index].to_i]
-              else
-                if event[$~[:var]]
-                  event[$~[:var]]
-                else
-                  raise "みゃー"
-                end 
-              end
-            else
-              v2
-            end
-          }
-            if v.is_a?(Array)
-              e[k] = vv
-            else
-              e[k] = vv[0]
-		end
-          }
-puts e
-          events += self.send(("parse_" + e["t"].to_s ).to_sym, channel, e)
-puts events
+        # パラメータの解釈
+        sub_events.each { |param, value|
+          x_value = if value.is_a?(Array)
+            value.map { |v| parse_sub_event_param(v, event, tables) }
+          else
+            parse_sub_event_param(value, event, tables)
+          end
+
+          sub_event[param] = x_value
         }
 
-        events
+        # イベント実行
+        events += self.send(("parse_" + sub_event["t"].to_s ).to_sym, channel, sub_event)
       }
+
+      events
     }
-  end
+  }
 end
 
 

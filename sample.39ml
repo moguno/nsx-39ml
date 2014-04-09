@@ -21,16 +21,16 @@ miku:
  
 channel2:
  - { t: tone, tone_no: 50 }
- - { t: note, key: G4, length: 4 }
- - { t: note, key: E4, length: 4 }
- - { t: note, key: E4, length: 2, vibrate: 32 }
- - { t: note, key: F4, length: 4 }
- - { t: note, key: D4, length: 4 }
- - { t: note, key: D4, length: 2, vibrate: 32 }
- - { t: note, key: C4, length: 4 }
- - { t: note, key: D4, length: 4 }
- - { t: note, key: E4, length: 4 }
- - { t: note, key: F4, length: 4 }
- - { t: note, key: G4, length: 4 }
- - { t: note, key: G4, length: 4 }
- - { t: note, key: G4, length: 2, vibrate: 32 }
+ - { t: note, key: G4, length: 4, vel: 64 }
+ - { t: note, key: E4, length: 4, vel: 64 }
+ - { t: note, key: E4, length: 2, vibrate: 32, vel: 64 }
+ - { t: note, key: F4, length: 4, vel: 64 }
+ - { t: note, key: D4, length: 4, vel: 64 }
+ - { t: note, key: D4, length: 2, vibrate: 32, vel: 64 }
+ - { t: note, key: C4, length: 4, vel: 64 }
+ - { t: note, key: D4, length: 4, vel: 64 }
+ - { t: note, key: E4, length: 4, vel: 64 }
+ - { t: note, key: F4, length: 4, vel: 64 }
+ - { t: note, key: G4, length: 4, vel: 64 }
+ - { t: note, key: G4, length: 4, vel: 64 }
+ - { t: note, key: G4, length: 2, vibrate: 32, vel: 64 }
